@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الموافي | تسجيل الدخول</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#29378C;
+    --navy-dark:#1d2766;
+    --red:#EF3B25;
+    --red-dark:#c92c1a;
+    --gold:#EBAC2E;
+    --ink:#30312E;
+    --paper:#F8FBF8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Cairo',sans-serif;
+    min-height:100vh;
+    background:linear-gradient(135deg,var(--navy) 0%, var(--navy-dark) 55%, #10163f 100%);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    color:var(--ink);
+  }
+  .bg-pattern{
+    position:fixed;inset:0;
+    background-image:radial-gradient(circle at 15% 20%, rgba(235,172,46,0.10) 0%, transparent 45%),
+                      radial-gradient(circle at 85% 80%, rgba(239,59,37,0.12) 0%, transparent 45%);
+    pointer-events:none;
+  }
+  .wrap{width:100%;max-width:420px;position:relative;z-index:1;}
+  .brand{text-align:center;margin-bottom:22px;}
+  .brand .word{
+    font-family:'Aref Ruqaa',serif;
+    font-size:56px;font-weight:700;color:#fff;line-height:1.3;
+    text-shadow:0 2px 12px rgba(0,0,0,.25);
+  }
+  .brand .word::after{
+    content:'';display:block;width:44px;height:3px;background:var(--gold);
+    border-radius:2px;margin:10px auto 0;
+  }
+  .ribbon{
+    display:inline-block;margin-top:10px;
+    background:var(--red);color:#fff;
+    font-size:11px;font-weight:700;letter-spacing:1px;
+    padding:4px 14px;border-radius:999px;
+    box-shadow:0 3px 10px rgba(239,59,37,.35);
+  }
+  .tagline{
+    color:rgba(255,255,255,.75);
+    font-size:12.5px;font-weight:600;letter-spacing:.5px;
+    margin-top:10px;
+  }
+  .card{
+    background:var(--paper);
+    border-radius:20px;
+    padding:30px 28px 26px;
+    box-shadow:0 24px 60px rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .tabs{
+    display:flex;background:#eceee9;border-radius:12px;padding:4px;margin-bottom:22px;
+  }
+  .tab{
+    flex:1;text-align:center;padding:10px 8px;border-radius:9px;
+    font-size:13.5px;font-weight:700;color:#7a7a76;cursor:pointer;
+    transition:all .2s ease;user-select:none;
+  }
+  .tab.active{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(41,55,140,.3);}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:#6b6b67;margin-bottom:6px;}
+  .field input{
+    width:100%;padding:12px 14px;border-radius:10px;
+    border:1.5px solid #dfe0da;font-size:15px;font-family:inherit;
+    background:#fff;transition:border-color .2s;color:var(--ink);
+  }
+  .field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(235,172,46,.18);}
+  .pin-boxes{display:flex;gap:10px;direction:ltr;}
+  .pin-boxes input{
+    width:100%;text-align:center;font-size:22px;font-weight:700;
+    padding:12px 0;border-radius:10px;border:1.5px solid #dfe0da;
+    background:#fff;letter-spacing:2px;
+  }
+  .pin-boxes input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(239,59,37,.15);}
+  .submit-btn{
+    width:100%;padding:13px;border:none;border-radius:11px;
+    background:var(--red);color:#fff;font-family:inherit;
+    font-size:15.5px;font-weight:700;cursor:pointer;margin-top:6px;
+    transition:background .2s, transform .1s;
+    box-shadow:0 8px 18px rgba(239,59,37,.28);
+  }
+  .submit-btn:hover{background:var(--red-dark);}
+  .submit-btn:active{transform:scale(.98);}
+  .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
+  .error-box{
+    display:none;background:#fdeceb;color:#a02c1c;border:1px solid #f4c3bd;
+    font-size:13px;font-weight:600;padding:10px 12px;border-radius:9px;margin-bottom:14px;
+  }
+  .foot-note{
+    margin-top:20px;padding-top:16px;border-top:1px dashed #dfe0da;
+    text-align:center;font-size:12px;color:#8b8b86;line-height:1.7;
+  }
+  .foot-note b{color:var(--navy);}
+  .powered{
+    text-align:center;margin-top:18px;font-size:11px;color:rgba(255,255,255,.45);
+    letter-spacing:.5px;
+  }
+  @media (max-width:420px){
+    .brand .word{font-size:42px;}
+    .card{padding:24px 20px 22px;border-radius:16px;}
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="word">الموافي</div>
+    <div class="ribbon">SINCE 1984</div>
+    <div class="tagline">FOR OILS, FILTERS &amp; ADDITIVES</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" id="tabPassword" onclick="switchTab('password')">دخول بكلمة السر</div>
+      <div class="tab" id="tabPin" onclick="switchTab('pin')">دخول بالـ PIN</div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <form id="passwordForm">
+      <div class="field">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" autocomplete="username" placeholder="اكتب اسم المستخدم" required>
+      </div>
+      <div class="field">
+        <label for="password">كلمة السر</label>
+        <input type="password" id="password" autocomplete="current-password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="submit-btn" id="passwordBtn">تسجيل الدخول</button>
+    </form>
+
+    <form id="pinForm" style="display:none;">
+      <div class="field">
+        <label for="pinName">اسم المستخدم</label>
+        <input type="text" id="pinName" autocomplete="username" placeholder="اكتب اسمك" required>
+      </div>
+      <div class="field">
+        <label>رقم الـ PIN (4 أرقام)</label>
+        <div class="pin-boxes">
+          <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+        </div>
+      </div>
+      <button type="submit" class="submit-btn" id="pinBtn">دخول</button>
+    </form>
+
+    <div class="foot-note">
+      الحسابات بتتعمل بمعرفة <b>الإدارة فقط</b> — مفيش تسجيل حساب جديد من هنا.<br>
+      نسيت بيانات الدخول أو عايز تغيّرها؟ تواصل مع صاحب البيزنس.
+    </div>
+  </div>
+
+  <div class="powered">El Mowafy Dashboard</div>
+</div>
+
+<script>
+/* ============================================================
+   DEMO / PROTOTYPE ONLY — لسه مش متوصل بباك اند حقيقي.
+   هنا بعدين هيتحط:
+     - نداء fetch لـ Supabase Auth (owner/manager/accountant)
+     - نداء fetch لـ n8n webhook أو Supabase RPC للـ PIN (sales/social)
+     - حفظ الـ JWT/session token في localStorage + بدء عداد الـ 15 دقيقة idle-timeout
+   ============================================================ */
+
+function switchTab(mode){
+  const isPw = mode === 'password';
+  document.getElementById('tabPassword').classList.toggle('active', isPw);
+  document.getElementById('tabPin').classList.toggle('active', !isPw);
+  document.getElementById('passwordForm').style.display = isPw ? 'block' : 'none';
+  document.getElementById('pinForm').style.display = isPw ? 'none' : 'block';
+  hideError();
+}
+
+function showError(msg){
+  const box = document.getElementById('errorBox');
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+function hideError(){
+  document.getElementById('errorBox').style.display = 'none';
+}
+
+// PIN boxes: auto-advance + auto-back
+const pinInputs = document.querySelectorAll('.pin-boxes input');
+pinInputs.forEach((input, idx) => {
+  input.addEventListener('input', () => {
+    input.value = input.value.replace(/[^0-9]/g, '');
+    if(input.value && idx < pinInputs.length - 1){
+      pinInputs[idx + 1].focus();
+    }
+  });
+  input.addEventListener('keydown', (e) => {
+    if(e.key === 'Backspace' && !input.value && idx > 0){
+      pinInputs[idx - 1].focus();
+    }
+  });
+});
+
+document.getElementById('passwordForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  hideError();
+  const btn = document.getElementById('passwordBtn');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  if(!username || !password){ showError('من فضلك اكتب اسم المستخدم وكلمة السر'); return; }
+
+  btn.disabled = true; btn.textContent = 'جارِ الدخول...';
+  // TODO: استبدال الجزء ده بنداء حقيقي لـ Supabase Auth
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+    showError('تسجيل الدخول مش متصل بباك اند حقيقي لسه — ده Demo بصري بس');
+  }, 700);
+});
+
+document.getElementById('pinForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  hideError();
+  const btn = document.getElementById('pinBtn');
+  const name = document.getElementById('pinName').value.trim();
+  const pin = Array.from(pinInputs).map(i => i.value).join('');
+  if(!name || pin.length !== 4){ showError('اكتب اسمك و4 أرقام PIN كاملة'); return; }
+
+  btn.disabled = true; btn.textContent = 'جارِ الدخول...';
+  // TODO: استبدال الجزء ده بنداء حقيقي لـ n8n / Supabase RPC للتحقق من الـ PIN
+  setTimeout(() => {
+    btn.disabled = false; btn.textContent = 'دخول';
+    showError('تسجيل الدخول مش متصل بباك اند حقيقي لسه — ده Demo بصري بس');
+  }, 700);
+});
+</script>
+</body>
+</html>

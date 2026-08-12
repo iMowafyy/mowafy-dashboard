@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الموافي | لوحة التحكم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#29378C; --navy-dark:#1d2766;
+    --red:#EF3B25; --red-dark:#c92c1a;
+    --gold:#EBAC2E; --ink:#30312E; --paper:#F8FBF8;
+    --line:#e7e8e2; --muted:#83837d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Cairo',sans-serif;background:#f2f3ee;color:var(--ink);}
+
+  /* ---- top bar ---- */
+  header{
+    background:linear-gradient(120deg,var(--navy) 0%, var(--navy-dark) 100%);
+    color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 4px 14px rgba(0,0,0,.15);position:sticky;top:0;z-index:20;flex-wrap:wrap;gap:10px;
+  }
+  .brandmark{display:flex;align-items:center;gap:10px;}
+  .brandmark .word{font-family:'Aref Ruqaa',serif;font-size:27px;font-weight:700;position:relative;padding-inline-end:12px;}
+  .brandmark .word::after{
+    content:'';position:absolute;top:2px;inset-inline-end:0;
+    width:6px;height:6px;border-radius:50%;background:var(--gold);
+  }
+  .brandmark small{display:block;font-size:10px;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:.5px;}
+  .user-box{display:flex;align-items:center;gap:14px;}
+  .role-pill{background:rgba(255,255,255,.14);padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:700;}
+  .user-name{font-size:13px;font-weight:700;}
+  .icon-btn{
+    background:rgba(255,255,255,.12);border:none;color:#fff;font-family:inherit;
+    font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:9px;cursor:pointer;
+    transition:background .2s;
+  }
+  .icon-btn:hover{background:rgba(255,255,255,.24);}
+  .icon-btn.danger{background:var(--red);}
+  .icon-btn.danger:hover{background:var(--red-dark);}
+
+  /* ---- preview switcher (demo only) ---- */
+  .preview-bar{
+    background:var(--gold);color:#3c2a02;font-size:12px;font-weight:700;
+    padding:9px 22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .preview-bar .tabs{display:flex;gap:6px;flex-wrap:wrap;}
+  .preview-bar button{
+    border:1.5px solid rgba(60,42,2,.25);background:rgba(255,255,255,.35);
+    color:#3c2a02;font-family:inherit;font-size:11.5px;font-weight:700;
+    padding:5px 11px;border-radius:7px;cursor:pointer;
+  }
+  .preview-bar button.active{background:#3c2a02;color:#fff;border-color:#3c2a02;}
+
+  main{max-width:1180px;margin:0 auto;padding:22px 20px 60px;}
+  .section-title{font-size:15px;font-weight:800;color:var(--navy);margin:26px 0 12px;}
+  .section-title:first-child{margin-top:0;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;}
+  .kpi{
+    background:#fff;border-radius:14px;padding:16px 18px;border:1px solid var(--line);
+    box-shadow:0 2px 8px rgba(0,0,0,.03);
+  }
+  .kpi .label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px;}
+  .kpi .value{font-size:22px;font-weight:800;color:var(--ink);}
+  .kpi .value.accent{color:var(--red);}
+  .kpi .value.good{color:#1c7d4f;}
+
+  .card{
+    background:#fff;border-radius:14px;padding:18px 20px;border:1px solid var(--line);
+    box-shadow:0 2px 8px rgba(0,0,0,.03);
+  }
+  .grid-2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+  @media(max-width:820px){.grid-2{grid-template-columns:1fr;}}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{text-align:right;color:var(--muted);font-weight:700;font-size:11.5px;padding:8px 6px;border-bottom:1.5px solid var(--line);}
+  td{padding:9px 6px;border-bottom:1px solid var(--line);font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  .tag-low{background:#fdeceb;color:var(--red-dark);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;}
+  .tag-ok{background:#e8f5ee;color:#1c7d4f;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;}
+
+  .search-wrap{display:flex;gap:10px;margin-bottom:16px;}
+  .search-wrap input{
+    flex:1;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+    font-family:inherit;font-size:14.5px;
+  }
+  .search-wrap input:focus{outline:none;border-color:var(--gold);}
+  .search-wrap button{
+    background:var(--red);color:#fff;border:none;padding:0 20px;border-radius:10px;
+    font-family:inherit;font-weight:700;cursor:pointer;
+  }
+  .branch-badge{background:#eef0fb;color:var(--navy);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .empty-note{color:var(--muted);font-size:12.5px;padding:14px 0;text-align:center;}
+  .placeholder-note{
+    background:#eef0fb;color:var(--navy);font-size:12px;font-weight:700;
+    padding:10px 14px;border-radius:10px;margin-bottom:14px;
+  }
+
+  /* ---- mobile ---- */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .tbl-wrap table{min-width:480px;}
+  @media(max-width:600px){
+    header{padding:12px 14px;}
+    .brandmark .word{font-size:21px;}
+    .brandmark small{font-size:9px;}
+    .user-box{gap:8px;width:100%;justify-content:space-between;}
+    .role-pill{display:none;}
+    .user-name{font-size:12px;}
+    .icon-btn{padding:7px 10px;font-size:11.5px;}
+    .preview-bar{padding:9px 14px;font-size:11px;}
+    main{padding:16px 12px 50px;}
+    .kpi .value{font-size:19px;}
+    .search-wrap{flex-direction:column;}
+    .search-wrap button{padding:11px;}
+    .card{padding:14px 14px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brandmark">
+    <div class="word">الموافي</div>
+    <div><small>DASHBOARD — فرع الملاحة</small></div>
+  </div>
+  <div class="user-box">
+    <span class="role-pill" id="roleLabel">صاحب البيزنس</span>
+    <span class="user-name" id="userLabel">الحاج الموافي</span>
+    <button class="icon-btn" onclick="alert('هيفتح فورم تغيير كلمة السر/الـ PIN — الحساب نفسه بتعمله الإدارة بس')">تغيير كلمة السر</button>
+    <button class="icon-btn danger" onclick="alert('تسجيل خروج (Demo)')">خروج</button>
+  </div>
+</header>
+
+<div class="preview-bar">
+  معاينة الأدوار (Demo فقط، مش هيظهر للمستخدم الحقيقي):
+  <div class="tabs">
+    <button class="active" onclick="setRole('owner')">صاحب البيزنس</button>
+    <button onclick="setRole('manager')">مدير الفرع</button>
+    <button onclick="setRole('accountant')">محاسب</button>
+    <button onclick="setRole('field')">مبيعات / سوشيال ميديا</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- ================= OWNER + MANAGER shared KPI ================= -->
+  <div id="viewOwner">
+    <div class="section-title">نظرة عامة — فرع الملاحة</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">مبيعات اليوم</div><div class="value">18,420 ج.م</div></div>
+      <div class="kpi"><div class="label">مبيعات الأسبوع</div><div class="value">96,150 ج.م</div></div>
+      <div class="kpi"><div class="label">مبيعات الشهر</div><div class="value">412,900 ج.م</div></div>
+      <div class="kpi"><div class="label">رصيد الخزينة</div><div class="value good">63,275 ج.م</div></div>
+      <div class="kpi"><div class="label">صافي الربح التقديري اليوم</div><div class="value accent">4,110 ج.م</div></div>
+    </div>
+
+    <div class="section-title">اتجاه المبيعات (آخر 7 أيام)</div>
+    <div class="card"><canvas id="salesChart" height="90"></canvas></div>
+
+    <div class="grid-2" style="margin-top:22px;">
+      <div class="card">
+        <div class="section-title" style="margin-top:0;">أكثر 5 أصناف مبيعاً اليوم</div>
+        <div class="tbl-wrap"><table>
+          <tr><th>الصنف</th><th>الكمية</th><th>الإجمالي</th></tr>
+          <tr><td>زيت موتور 5W-30</td><td>34</td><td>6,800 ج.م</td></tr>
+          <tr><td>فلتر زيت</td><td>51</td><td>2,550 ج.م</td></tr>
+          <tr><td>زيت جير</td><td>18</td><td>3,240 ج.م</td></tr>
+          <tr><td>إضافات بنزين</td><td>22</td><td>1,980 ج.م</td></tr>
+          <tr><td>فلتر هواء</td><td>15</td><td>1,125 ج.م</td></tr>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="margin-top:0;">أصناف تحت الحد الأدنى</div>
+        <div class="tbl-wrap"><table>
+          <tr><th>الصنف</th><th>الكمية</th><th>الحالة</th></tr>
+          <tr><td>زيت موتور 10W-40</td><td>3</td><td><span class="tag-low">تحت الحد</span></td></tr>
+          <tr><td>فلتر بنزين</td><td>2</td><td><span class="tag-low">تحت الحد</span></td></tr>
+          <tr><td>شمعات إشعال</td><td>7</td><td><span class="tag-ok">قريب من الحد</span></td></tr>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="section-title">أوامر الصيانة اليوم</div>
+    <div class="card">
+      <div class="tbl-wrap"><table>
+        <tr><th>رقم الأمر</th><th>العميل</th><th>الإجمالي</th><th>طريقة الدفع</th></tr>
+        <tr><td>#4021</td><td>محمد سعيد</td><td>850 ج.م</td><td>كاش</td></tr>
+        <tr><td>#4022</td><td>عميل نقدي</td><td>320 ج.م</td><td>كاش</td></tr>
+      </table></div>
+    </div>
+
+    <div class="section-title" id="ownerOnlyTitle">مقارنة الفروع (هتتفعّل تلقائيًا مع كل فرع جديد يتوصل)</div>
+    <div class="card" id="ownerOnlyCompare">
+      <div class="placeholder-note">دلوقتي متصل بس فرع الملاحة — لما فرع السيوف والمخازن يتوصلوا هيظهروا هنا جنب بعض تلقائيًا.</div>
+      <div class="tbl-wrap"><table>
+        <tr><th>الفرع</th><th>مبيعات اليوم</th><th>مبيعات الشهر</th><th>رصيد الخزينة</th></tr>
+        <tr><td>فرع الملاحة</td><td>18,420 ج.م</td><td>412,900 ج.م</td><td>63,275 ج.م</td></tr>
+        <tr><td style="color:var(--muted)">فرع السيوف</td><td colspan="3" style="color:var(--muted)">لسه مش متصل</td></tr>
+        <tr><td style="color:var(--muted)">المخزن الرئيسي</td><td colspan="3" style="color:var(--muted)">لسه مش متصل</td></tr>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ================= ACCOUNTANT ================= -->
+  <div id="viewAccountant" style="display:none;">
+    <div class="section-title">الخزينة والمالية</div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">رصيد الكاش</div><div class="value good">63,275 ج.م</div></div>
+      <div class="kpi"><div class="label">رصيد البنك</div><div class="value">140,000 ج.م</div></div>
+      <div class="kpi"><div class="label">مبيعات اليوم (مالي)</div><div class="value">18,420 ج.م</div></div>
+      <div class="kpi"><div class="label">مصروفات اليوم</div><div class="value accent">2,150 ج.م</div></div>
+    </div>
+    <div class="section-title">حركة الخزينة اليوم</div>
+    <div class="card">
+      <div class="tbl-wrap"><table>
+        <tr><th>الوقت</th><th>البيان</th><th>نوع</th><th>المبلغ</th></tr>
+        <tr><td>09:15</td><td>مبيعات كاش</td><td>وارد</td><td>+4,200 ج.م</td></tr>
+        <tr><td>11:40</td><td>سحب مصروفات</td><td>منصرف</td><td>-1,000 ج.م</td></tr>
+        <tr><td>14:05</td><td>تحصيل عميل آجل</td><td>وارد</td><td>+2,500 ج.م</td></tr>
+      </table></div>
+    </div>
+    <div class="section-title">تقرير ضريبي (ملخص شهري)</div>
+    <div class="card"><div class="empty-note">هيتوصل بعدين بجدول الفواتير الضريبية الفعلي من STT</div></div>
+  </div>
+
+  <!-- ================= SALES / SOCIAL (PIN) ================= -->
+  <div id="viewField" style="display:none;">
+    <div class="section-title">بحث عن صنف — السعر والمخزون</div>
+    <div class="card">
+      <div class="search-wrap">
+        <input type="text" id="fieldSearch" placeholder="اكتب اسم الصنف أو الكود..." oninput="filterField()">
+        <button onclick="filterField()">بحث</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <tr><th>الصنف</th><th>الكود</th><th>السعر</th><th>الكمية المتاحة</th><th>الفرع</th></tr>
+        <tbody id="fieldTableBody"></tbody>
+      </table></div>
+      <div class="placeholder-note" style="margin-top:12px;">لما باقي الفروع تتوصل، البحث هيرجّع كل فرع فيه الصنف متاح تلقائيًا في نفس الجدول.</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ============================================================
+   DEMO / PROTOTYPE ONLY — بيانات وهمية بس عشان نتأكد من الشكل والصلاحيات.
+   لاحقًا هيتم استبدال كل الأرقام دي بنداءات حقيقية لـ n8n webhooks.
+   ============================================================ */
+
+const roleNames = {
+  owner: 'صاحب البيزنس',
+  manager: 'مدير الفرع',
+  accountant: 'محاسب',
+  field: 'مبيعات / سوشيال ميديا'
+};
+const roleUsers = {
+  owner: 'الحاج الموافي',
+  manager: 'مدير الملاحة',
+  accountant: 'محاسب الملاحة',
+  field: 'أحمد - مبيعات'
+};
+
+function setRole(role){
+  document.querySelectorAll('.preview-bar button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  document.getElementById('roleLabel').textContent = roleNames[role];
+  document.getElementById('userLabel').textContent = roleUsers[role];
+
+  document.getElementById('viewOwner').style.display = (role === 'owner' || role === 'manager') ? 'block' : 'none';
+  document.getElementById('viewAccountant').style.display = role === 'accountant' ? 'block' : 'none';
+  document.getElementById('viewField').style.display = role === 'field' ? 'block' : 'none';
+
+  // المدير مايشوفش قسم "مقارنة الفروع" ولا صافي الربح — دول لصاحب البيزنس بس
+  const ownerOnlyItems = [document.getElementById('ownerOnlyTitle'), document.getElementById('ownerOnlyCompare')];
+  ownerOnlyItems.forEach(el => el.style.display = role === 'owner' ? 'block' : 'none');
+  document.querySelectorAll('.kpi')[4] && (document.querySelectorAll('.kpi')[4].style.display = role === 'owner' ? 'block' : 'none');
+}
+
+// ---- sales trend chart ----
+const ctx = document.getElementById('salesChart');
+if(ctx){
+  new Chart(ctx, {
+    type: 'line',
+    data:{
+      labels:['السبت','الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'],
+      datasets:[{
+        label:'المبيعات (ج.م)',
+        data:[14200,16800,15100,19300,17600,20100,18420],
+        borderColor:'#EF3B25',
+        backgroundColor:'rgba(239,59,37,0.08)',
+        tension:.35, fill:true, pointRadius:3
+      }]
+    },
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true, grid:{color:'#eee'}}, x:{grid:{display:false}}}
+    }
+  });
+}
+
+// ---- product search demo (sales/social role) ----
+const demoProducts = [
+  {name:'زيت موتور 5W-30', code:'OIL-5030', price:'200 ج.م', qty:34, branch:'فرع الملاحة'},
+  {name:'زيت موتور 10W-40', code:'OIL-1040', price:'185 ج.م', qty:3, branch:'فرع الملاحة'},
+  {name:'فلتر زيت', code:'FLT-OIL-01', price:'50 ج.م', qty:80, branch:'فرع الملاحة'},
+  {name:'فلتر هواء', code:'FLT-AIR-02', price:'75 ج.م', qty:22, branch:'فرع الملاحة'},
+  {name:'فلتر بنزين', code:'FLT-FUEL-03', price:'65 ج.م', qty:2, branch:'فرع الملاحة'},
+  {name:'إضافات بنزين', code:'ADD-FUEL-09', price:'90 ج.م', qty:40, branch:'فرع الملاحة'}
+];
+function renderField(list){
+  const body = document.getElementById('fieldTableBody');
+  body.innerHTML = list.map(p => `
+    <tr>
+      <td>${p.name}</td><td>${p.code}</td><td>${p.price}</td>
+      <td>${p.qty <= 5 ? '<span class="tag-low">'+p.qty+'</span>' : p.qty}</td>
+      <td><span class="branch-badge">${p.branch}</span></td>
+    </tr>`).join('');
+}
+function filterField(){
+  const q = document.getElementById('fieldSearch').value.trim();
+  const filtered = q ? demoProducts.filter(p => p.name.includes(q) || p.code.toLowerCase().includes(q.toLowerCase())) : demoProducts;
+  renderField(filtered);
+}
+renderField(demoProducts);
+</script>
+</body>
+</html>
