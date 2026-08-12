@@ -300,18 +300,20 @@ const roleNames = {
   field: 'مبيعات / سوشيال ميديا'
 };
 
-function applyRole(role){
+function applyRole(profile){
+  const role = profile.role;
   document.getElementById('viewOwner').style.display = (role === 'owner' || role === 'manager') ? 'block' : 'none';
   document.getElementById('viewAccountant').style.display = role === 'accountant' ? 'block' : 'none';
   document.getElementById('viewField').style.display = role === 'field' ? 'block' : 'none';
 
-  // المدير مايشوفش "مقارنة الفروع" ولا "إضافة مستخدم" ولا صافي الربح — دول لصاحب البيزنس بس
-  const ownerOnlyItems = [
-    document.getElementById('ownerOnlyTitle'), document.getElementById('ownerOnlyCompare'),
-    document.getElementById('ownerOnlyUsersTitle'), document.getElementById('ownerOnlyUsers')
-  ];
+  // المدير مايشوفش "مقارنة الفروع" ولا صافي الربح — دول لصاحب البيزنس بس (كل الأونرز)
+  const ownerOnlyItems = [document.getElementById('ownerOnlyTitle'), document.getElementById('ownerOnlyCompare')];
   ownerOnlyItems.forEach(el => el.style.display = role === 'owner' ? 'block' : 'none');
   document.querySelectorAll('.kpi')[4] && (document.querySelectorAll('.kpi')[4].style.display = role === 'owner' ? 'block' : 'none');
+
+  // "إضافة مستخدم جديد": للأدمن الرئيسي بس، مش كل أصحاب البيزنس
+  const adminOnlyItems = [document.getElementById('ownerOnlyUsersTitle'), document.getElementById('ownerOnlyUsers')];
+  adminOnlyItems.forEach(el => el.style.display = profile.is_admin === true ? 'block' : 'none');
 }
 
 async function requireSession(){
@@ -334,7 +336,7 @@ async function loadUser(){
 
   document.getElementById('userLabel').textContent = profile.full_name;
   document.getElementById('roleLabel').textContent = roleNames[profile.role] || profile.role;
-  applyRole(profile.role);
+  applyRole(profile);
 }
 
 async function logout(){
