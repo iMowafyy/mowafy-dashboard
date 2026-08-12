@@ -20,36 +20,32 @@
   <!-- ================= OWNER + MANAGER ================= -->
   <div id="viewOwner">
     <div class="section-title" id="branchTitle">نظرة عامة — فرع الملاحة</div>
+    <div id="connBanner"></div>
     <div class="kpi-grid">
-      <div class="kpi"><div class="label">مبيعات اليوم</div><div class="value">18,420 ج.م</div></div>
-      <div class="kpi"><div class="label">مبيعات الأسبوع</div><div class="value">96,150 ج.م</div></div>
-      <div class="kpi"><div class="label">مبيعات الشهر</div><div class="value">412,900 ج.م</div></div>
-      <div class="kpi good"><div class="label">رصيد الخزينة</div><div class="value good">63,275 ج.م</div></div>
-      <div class="kpi accent" id="profitKpi"><div class="label">صافي الربح التقديري اليوم</div><div class="value accent">4,110 ج.م</div></div>
+      <div class="kpi"><div class="label">مبيعات اليوم</div><div class="value" id="kpiSalesToday">—</div></div>
+      <div class="kpi"><div class="label">مبيعات الأسبوع</div><div class="value" id="kpiSalesWeek">—</div></div>
+      <div class="kpi"><div class="label">مبيعات الشهر</div><div class="value" id="kpiSalesMonth">—</div></div>
+      <div class="kpi good"><div class="label">رصيد الخزينة</div><div class="value good" id="kpiCash">—</div></div>
+      <div class="kpi accent" id="profitKpi"><div class="label">صافي الربح التقديري اليوم</div><div class="value accent" id="kpiProfit">—</div></div>
     </div>
 
     <div class="section-title">اتجاه المبيعات (آخر 7 أيام)</div>
+    <div class="section-sub">لسه بيانات تجريبية — هيتحول لأرقام حقيقية لما نضيف استعلام اتجاه المبيعات في n8n</div>
     <div class="card hoverable"><canvas id="salesChart" height="90"></canvas></div>
 
     <div class="grid-2" style="margin-top:22px;">
       <div class="card hoverable">
-        <div class="section-title" style="margin-top:0;">أكثر 5 أصناف مبيعاً اليوم</div>
+        <div class="section-title" style="margin-top:0;">أكثر الأصناف مبيعاً اليوم</div>
         <div class="tbl-wrap"><table>
           <tr><th>الصنف</th><th>الكمية</th><th>الإجمالي</th></tr>
-          <tr><td>زيت موتور 5W-30</td><td>34</td><td>6,800 ج.م</td></tr>
-          <tr><td>فلتر زيت</td><td>51</td><td>2,550 ج.م</td></tr>
-          <tr><td>زيت جير</td><td>18</td><td>3,240 ج.م</td></tr>
-          <tr><td>إضافات بنزين</td><td>22</td><td>1,980 ج.م</td></tr>
-          <tr><td>فلتر هواء</td><td>15</td><td>1,125 ج.م</td></tr>
+          <tbody id="topItemsBody"><tr><td colspan="3" class="empty-note">جارِ التحميل...</td></tr></tbody>
         </table></div>
       </div>
       <div class="card hoverable">
         <div class="section-title" style="margin-top:0;">أصناف تحت الحد الأدنى</div>
         <div class="tbl-wrap"><table>
-          <tr><th>الصنف</th><th>الكمية</th><th>الحالة</th></tr>
-          <tr><td>زيت موتور 10W-40</td><td>3</td><td><span class="badge badge-red">تحت الحد</span></td></tr>
-          <tr><td>فلتر بنزين</td><td>2</td><td><span class="badge badge-red">تحت الحد</span></td></tr>
-          <tr><td>شمعات إشعال</td><td>7</td><td><span class="badge badge-gold">قريب من الحد</span></td></tr>
+          <tr><th>الصنف</th><th>الكمية</th><th>الحد الأدنى</th></tr>
+          <tbody id="lowStockBody"><tr><td colspan="3" class="empty-note">جارِ التحميل...</td></tr></tbody>
         </table></div>
       </div>
     </div>
@@ -57,9 +53,7 @@
     <div class="section-title">أوامر الصيانة اليوم</div>
     <div class="card hoverable">
       <div class="tbl-wrap"><table>
-        <tr><th>رقم الأمر</th><th>العميل</th><th>الإجمالي</th><th>طريقة الدفع</th></tr>
-        <tr><td>#4021</td><td>محمد سعيد</td><td>850 ج.م</td><td>كاش</td></tr>
-        <tr><td>#4022</td><td>عميل نقدي</td><td>320 ج.م</td><td>كاش</td></tr>
+        <tbody id="maintenanceBody"><tr><td class="empty-note">جارِ التحميل...</td></tr></tbody>
       </table></div>
     </div>
 
@@ -68,7 +62,7 @@
       <div class="placeholder-note">دلوقتي متصل بس فرع الملاحة — لما باقي الفروع تتوصل هيظهروا هنا جنب بعض تلقائيًا.</div>
       <div class="tbl-wrap"><table>
         <tr><th>الفرع</th><th>مبيعات اليوم</th><th>مبيعات الشهر</th><th>رصيد الخزينة</th></tr>
-        <tr><td>فرع الملاحة</td><td>18,420 ج.م</td><td>412,900 ج.م</td><td>63,275 ج.م</td></tr>
+        <tr><td>فرع الملاحة</td><td id="cmpSalesToday">—</td><td id="cmpSalesMonth">—</td><td id="cmpCash">—</td></tr>
         <tr><td style="color:var(--muted)">فرع السيوف</td><td colspan="3" style="color:var(--muted)">لسه مش متصل</td></tr>
         <tr><td style="color:var(--muted)">المخزن الرئيسي</td><td colspan="3" style="color:var(--muted)">لسه مش متصل</td></tr>
       </table></div>
@@ -149,6 +143,105 @@
     document.getElementById('profitKpi')
   ];
   ownerOnly.forEach(el => el.style.display = role === 'owner' ? '' : 'none');
+
+  // ============================================================
+  // ---- بيانات حقيقية من فرع الملاحة عبر n8n webhook ----
+  // ============================================================
+  const N8N_URL = 'https://trudi-unsyllabicated-nonhypostatically.ngrok-free.dev/webhook/elmalaha-dashboard';
+
+  function fmtMoney(n){
+    const num = Number(n);
+    if(isNaN(num)) return '—';
+    return num.toLocaleString('ar-EG', { maximumFractionDigits: 0 }) + ' ج.م';
+  }
+  // بيدور على أول قيمة رقمية جوه أوبچكت (لأن أسماء الأعمدة في الاستعلامات لسه مش متأكدين منها)
+  function firstNumber(obj){
+    if(obj == null) return null;
+    if(typeof obj === 'number') return obj;
+    if(typeof obj === 'object'){
+      for(const k in obj){ if(typeof obj[k] === 'number') return obj[k]; }
+      for(const k in obj){ const n = Number(obj[k]); if(!isNaN(n) && obj[k] !== '' && obj[k] !== null) return n; }
+    }
+    return null;
+  }
+  function showConnBanner(state, msg){
+    const el = document.getElementById('connBanner');
+    if(!el) return;
+    if(state === 'ok'){ el.innerHTML = ''; return; }
+    const cls = state === 'error' ? 'badge-red' : 'badge-gold';
+    el.innerHTML = `<div class="card" style="padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+      <span class="badge ${cls}">${state === 'error' ? 'خطأ اتصال' : 'جارِ التحديث'}</span>
+      <span style="font-size:13.5px;color:var(--muted);">${msg}</span>
+    </div>`;
+  }
+
+  async function loadBranchData(){
+    if(role !== 'owner' && role !== 'manager') return;
+    showConnBanner('loading', 'جارِ الاتصال بسيرفر الفرع...');
+    let data;
+    try{
+      const res = await fetch(N8N_URL, { method: 'GET' });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      data = await res.json();
+    }catch(err){
+      showConnBanner('error', 'تعذر الاتصال بسيرفر الفرع — تأكد إن جهاز n8n شغّال ومتصل بشبكة الفرع، أو إنك متصل بنفس الشبكة/الـ VPN.');
+      return;
+    }
+    showConnBanner('ok', '');
+
+    const salesToday = firstNumber(data.sales_today);
+    const salesWeek = firstNumber(data.sales_week);
+    const salesMonth = firstNumber(data.sales_month);
+    const cashTotal = Array.isArray(data.cash)
+      ? data.cash.reduce((sum, row) => sum + (firstNumber(row) || 0), 0)
+      : firstNumber(data.cash);
+
+    document.getElementById('kpiSalesToday').textContent = fmtMoney(salesToday);
+    document.getElementById('kpiSalesWeek').textContent = fmtMoney(salesWeek);
+    document.getElementById('kpiSalesMonth').textContent = fmtMoney(salesMonth);
+    document.getElementById('kpiCash').textContent = fmtMoney(cashTotal);
+    document.getElementById('cmpSalesToday').textContent = fmtMoney(salesToday);
+    document.getElementById('cmpSalesMonth').textContent = fmtMoney(salesMonth);
+    document.getElementById('cmpCash').textContent = fmtMoney(cashTotal);
+    // مفيش استعلام ربح لسه، فبنسيبه شرطة لحد ما نضيفه في n8n
+    const profitEl = document.getElementById('kpiProfit');
+    if(profitEl) profitEl.textContent = '—';
+
+    // ---- أكثر الأصناف مبيعاً ----
+    const topBody = document.getElementById('topItemsBody');
+    if(topBody){
+      const rows = Array.isArray(data.top_items) ? data.top_items : [];
+      topBody.innerHTML = rows.length ? rows.map(r => {
+        const vals = Object.values(r);
+        return `<tr><td>${vals[0] ?? '—'}</td><td>${vals[1] ?? '—'}</td><td>${vals[2] ?? '—'}</td></tr>`;
+      }).join('') : '<tr><td colspan="3" class="empty-note">مفيش بيانات دلوقتي</td></tr>';
+    }
+
+    // ---- أصناف تحت الحد الأدنى ----
+    const lowBody = document.getElementById('lowStockBody');
+    if(lowBody){
+      const rows = Array.isArray(data.low_stock) ? data.low_stock : [];
+      lowBody.innerHTML = rows.length ? rows.map(r => {
+        const vals = Object.values(r);
+        return `<tr><td>${vals[0] ?? '—'}</td><td><span class="badge badge-red">${vals[1] ?? '—'}</span></td><td>${vals[2] ?? '—'}</td></tr>`;
+      }).join('') : '<tr><td colspan="3" class="empty-note">مفيش أصناف تحت الحد دلوقتي</td></tr>';
+    }
+
+    // ---- أوامر الصيانة اليوم ----
+    const maintBody = document.getElementById('maintenanceBody');
+    if(maintBody){
+      const m = data.maintenance_today;
+      const rows = Array.isArray(m) ? m : (m ? [m] : []);
+      if(rows.length){
+        const cols = Object.keys(rows[0]);
+        maintBody.innerHTML = `<tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr>` +
+          rows.map(r => `<tr>${cols.map(c => `<td>${r[c] ?? '—'}</td>`).join('')}</tr>`).join('');
+      } else {
+        maintBody.innerHTML = '<tr><td class="empty-note">مفيش أوامر صيانة اليوم</td></tr>';
+      }
+    }
+  }
+  loadBranchData();
 
   // ---- sales trend chart ----
   const ctx = document.getElementById('salesChart');
