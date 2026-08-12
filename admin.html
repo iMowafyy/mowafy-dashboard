@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try{document.documentElement.setAttribute('data-theme', localStorage.getItem('mowafy_theme') || 'light');}catch(e){}</script>
 <title>لوحة الإدارة | الموافي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=4">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   .tabs2{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;}
@@ -142,7 +143,7 @@
   </div>
 </main>
 
-<script src="app.js"></script>
+<script src="app.js?v=4"></script>
 <script>
 (async function(){
   const profile = await loadProfile();

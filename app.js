@@ -17,6 +17,30 @@ const ACTION_NAMES = {
   reset_password: 'إعادة تعيين كلمة سر/PIN', change_password: 'تغيير كلمة السر بنفسه'
 };
 
+// ---- الوضع الليلي/النهاري ----
+const THEME_KEY = 'mowafy_theme';
+function getTheme() {
+  try { return localStorage.getItem(THEME_KEY) || 'light'; } catch (e) { return 'light'; }
+}
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+}
+applyTheme(getTheme());
+
+function sunIcon() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>';
+}
+function moonIcon() {
+  return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a.75.75 0 0 0-.9-.9A9.5 9.5 0 1 0 21.4 15.4a.75.75 0 0 0-.9-.9z"/></svg>';
+}
+function toggleTheme() {
+  const next = getTheme() === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* ignore */ }
+  applyTheme(next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.innerHTML = next === 'dark' ? sunIcon() : moonIcon();
+}
+
 function toEmail(name) {
   return String(name).trim().toLowerCase().replace(/\s+/g, '_') + EMAIL_DOMAIN;
 }
@@ -106,6 +130,7 @@ function renderNav(profile) {
       ${links.map(l => `<a href="${l.href}" class="nav-link ${page === l.id ? 'active' : ''}">${l.label}</a>`).join('')}
     </div>
     <div class="user-box">
+      <button class="btn btn-ghost theme-toggle" id="themeToggle" onclick="toggleTheme()" title="تبديل الوضع الليلي/النهاري" aria-label="تبديل الوضع الليلي/النهاري">${getTheme() === 'dark' ? sunIcon() : moonIcon()}</button>
       <div class="user-chip">
         <span class="avatar">${(profile.full_name || '?').trim().charAt(0)}</span>
         <span class="user-meta">

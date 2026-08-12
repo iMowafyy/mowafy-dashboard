@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try{document.documentElement.setAttribute('data-theme', localStorage.getItem('mowafy_theme') || 'light');}catch(e){}</script>
 <title>لوحة التحكم | الموافي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -22,14 +23,21 @@
     <div class="section-title" id="branchTitle">نظرة عامة — فرع الملاحة</div>
     <div id="connBanner"></div>
     <div class="kpi-grid">
-      <div class="kpi"><div class="label">مبيعات اليوم</div><div class="value" id="kpiSalesToday">—</div></div>
+      <div class="kpi kpi-featured"><div class="label">مبيعات اليوم</div><div class="value" id="kpiSalesToday">—</div></div>
       <div class="kpi"><div class="label">مبيعات الأسبوع</div><div class="value" id="kpiSalesWeek">—</div></div>
       <div class="kpi"><div class="label">مبيعات الشهر</div><div class="value" id="kpiSalesMonth">—</div></div>
       <div class="kpi good"><div class="label">رصيد الخزينة</div><div class="value good" id="kpiCash">—</div></div>
-      <div class="kpi accent" id="profitKpi"><div class="label">صافي الربح التقديري اليوم</div><div class="value accent" id="kpiProfit">—</div></div>
+      <div class="kpi accent kpi-featured" id="profitKpi"><div class="label">صافي الربح التقديري اليوم</div><div class="value accent" id="kpiProfit">—</div></div>
     </div>
 
-    <div class="section-title">اتجاه المبيعات (آخر 7 أيام)</div>
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <span>اتجاه المبيعات (آخر 7 أيام)</span>
+      <div class="seg-switch" id="chartTypeSwitch">
+        <button type="button" class="active" data-type="area">منطقة</button>
+        <button type="button" data-type="line">خط</button>
+        <button type="button" data-type="bar">أعمدة</button>
+      </div>
+    </div>
     <div class="section-sub">لسه بيانات تجريبية — هيتحول لأرقام حقيقية لما نضيف استعلام اتجاه المبيعات في n8n</div>
     <div class="card hoverable"><canvas id="salesChart" height="90"></canvas></div>
 
@@ -125,7 +133,7 @@
 
 </main>
 
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 <script>
 (async function(){
   const profile = await loadProfile();
@@ -245,8 +253,9 @@
 
   // ---- sales trend chart ----
   const ctx = document.getElementById('salesChart');
+  let salesChart = null;
   if(ctx){
-    new Chart(ctx, {
+    salesChart = new Chart(ctx, {
       type: 'line',
       data:{
         labels:['السبت','الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'],
@@ -255,13 +264,40 @@
           data:[14200,16800,15100,19300,17600,20100,18420],
           borderColor:'#EF3B25',
           backgroundColor:'rgba(239,59,37,0.08)',
+          borderRadius:6,
           tension:.35, fill:true, pointRadius:3
         }]
       },
       options:{
         plugins:{legend:{display:false}},
-        scales:{y:{beginAtZero:true, grid:{color:'#eee'}}, x:{grid:{display:false}}}
+        scales:{y:{beginAtZero:true, grid:{color:'rgba(125,125,120,0.15)'}}, x:{grid:{display:false}}}
       }
+    });
+  }
+
+  // ---- تبديل شكل الرسم البياني (منطقة / خط / أعمدة) ----
+  function setChartType(type){
+    if(!salesChart) return;
+    const ds = salesChart.data.datasets[0];
+    if(type === 'bar'){
+      salesChart.config.type = 'bar';
+      ds.backgroundColor = 'rgba(239,59,37,0.55)';
+      ds.fill = false;
+    } else {
+      salesChart.config.type = 'line';
+      ds.fill = (type === 'area');
+      ds.backgroundColor = 'rgba(239,59,37,0.08)';
+    }
+    salesChart.update();
+  }
+  const switchHost = document.getElementById('chartTypeSwitch');
+  if(switchHost){
+    switchHost.addEventListener('click', function(e){
+      const btn = e.target.closest('button[data-type]');
+      if(!btn) return;
+      switchHost.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setChartType(btn.dataset.type);
     });
   }
 
