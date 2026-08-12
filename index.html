@@ -7,25 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=3">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-  :root{
-    --navy:#29378C;
-    --navy-dark:#1d2766;
-    --red:#EF3B25;
-    --red-dark:#c92c1a;
-    --gold:#EBAC2E;
-    --ink:#30312E;
-    --paper:#F8FBF8;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
   body{
-    font-family:'Cairo',sans-serif;
     min-height:100vh;
     background:linear-gradient(135deg,var(--navy) 0%, var(--navy-dark) 55%, #10163f 100%);
-    display:flex;align-items:center;justify-content:center;
-    padding:24px;
-    color:var(--ink);
+    display:flex;align-items:center;justify-content:center;padding:24px;
   }
   .bg-pattern{
     position:fixed;inset:0;
@@ -45,41 +33,22 @@
     border-radius:2px;margin:10px auto 0;
   }
   .ribbon{
-    display:inline-block;margin-top:10px;
-    background:var(--red);color:#fff;
-    font-size:11px;font-weight:700;letter-spacing:1px;
-    padding:4px 14px;border-radius:999px;
+    display:inline-block;margin-top:10px;background:var(--red);color:#fff;
+    font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 14px;border-radius:999px;
     box-shadow:0 3px 10px rgba(239,59,37,.35);
   }
-  .tagline{
-    color:rgba(255,255,255,.75);
-    font-size:12.5px;font-weight:600;letter-spacing:.5px;
-    margin-top:10px;
+  .tagline{color:rgba(255,255,255,.75);font-size:12.5px;font-weight:600;letter-spacing:.5px;margin-top:10px;}
+  .login-card{
+    background:var(--paper);border-radius:20px;padding:30px 28px 26px;
+    box-shadow:0 24px 60px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);
   }
-  .card{
-    background:var(--paper);
-    border-radius:20px;
-    padding:30px 28px 26px;
-    box-shadow:0 24px 60px rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.08);
-  }
-  .tabs{
-    display:flex;background:#eceee9;border-radius:12px;padding:4px;margin-bottom:22px;
-  }
+  .tabs{display:flex;background:#eceee9;border-radius:12px;padding:4px;margin-bottom:22px;}
   .tab{
     flex:1;text-align:center;padding:10px 8px;border-radius:9px;
     font-size:13.5px;font-weight:700;color:#7a7a76;cursor:pointer;
     transition:all .2s ease;user-select:none;
   }
   .tab.active{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(41,55,140,.3);}
-  .field{margin-bottom:16px;}
-  .field label{display:block;font-size:12.5px;font-weight:700;color:#6b6b67;margin-bottom:6px;}
-  .field input{
-    width:100%;padding:12px 14px;border-radius:10px;
-    border:1.5px solid #dfe0da;font-size:15px;font-family:inherit;
-    background:#fff;transition:border-color .2s;color:var(--ink);
-  }
-  .field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(235,172,46,.18);}
   .pin-boxes{display:flex;gap:10px;direction:ltr;}
   .pin-boxes input{
     width:100%;text-align:center;font-size:22px;font-weight:700;
@@ -87,38 +56,22 @@
     background:#fff;letter-spacing:2px;
   }
   .pin-boxes input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(239,59,37,.15);}
-  .submit-btn{
-    width:100%;padding:13px;border:none;border-radius:11px;
-    background:var(--red);color:#fff;font-family:inherit;
-    font-size:15.5px;font-weight:700;cursor:pointer;margin-top:6px;
-    transition:background .2s, transform .1s;
-    box-shadow:0 8px 18px rgba(239,59,37,.28);
-  }
-  .submit-btn:hover{background:var(--red-dark);}
-  .submit-btn:active{transform:scale(.98);}
-  .submit-btn:disabled{opacity:.6;cursor:not-allowed;}
-  .error-box{
-    display:none;background:#fdeceb;color:#a02c1c;border:1px solid #f4c3bd;
-    font-size:13px;font-weight:600;padding:10px 12px;border-radius:9px;margin-bottom:14px;
-  }
+  .full-btn{width:100%;}
   .foot-note{
     margin-top:20px;padding-top:16px;border-top:1px dashed #dfe0da;
     text-align:center;font-size:12px;color:#8b8b86;line-height:1.7;
   }
   .foot-note b{color:var(--navy);}
-  .powered{
-    text-align:center;margin-top:18px;font-size:11px;color:rgba(255,255,255,.45);
-    letter-spacing:.5px;
-  }
+  .powered{text-align:center;margin-top:18px;font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.5px;}
   @media (max-width:420px){
     .brand .word{font-size:42px;}
-    .card{padding:24px 20px 22px;border-radius:16px;}
+    .login-card{padding:24px 20px 22px;border-radius:16px;}
   }
 </style>
 </head>
 <body>
 <div class="bg-pattern"></div>
-<div class="wrap">
+<div class="wrap page-fade">
 
   <div class="brand">
     <div class="word">الموافي</div>
@@ -126,13 +79,11 @@
     <div class="tagline">FOR OILS, FILTERS &amp; ADDITIVES</div>
   </div>
 
-  <div class="card">
+  <div class="login-card">
     <div class="tabs">
       <div class="tab active" id="tabPassword" onclick="switchTab('password')">دخول بكلمة السر</div>
       <div class="tab" id="tabPin" onclick="switchTab('pin')">دخول بالـ PIN</div>
     </div>
-
-    <div class="error-box" id="errorBox"></div>
 
     <form id="passwordForm">
       <div class="field">
@@ -143,7 +94,7 @@
         <label for="password">كلمة السر</label>
         <input type="password" id="password" autocomplete="current-password" placeholder="••••••••" required>
       </div>
-      <button type="submit" class="submit-btn" id="passwordBtn">تسجيل الدخول</button>
+      <button type="submit" class="btn btn-primary full-btn" id="passwordBtn">تسجيل الدخول</button>
     </form>
 
     <form id="pinForm" style="display:none;">
@@ -160,7 +111,7 @@
           <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]*">
         </div>
       </div>
-      <button type="submit" class="submit-btn" id="pinBtn">دخول</button>
+      <button type="submit" class="btn btn-primary full-btn" id="pinBtn">دخول</button>
     </form>
 
     <div class="foot-note">
@@ -172,24 +123,8 @@
   <div class="powered">El Mowafy Dashboard</div>
 </div>
 
+<script src="app.js?v=3"></script>
 <script>
-/* ============================================================
-   Supabase Auth — تسجيل دخول حقيقي.
-   كل مستخدم (باسورد أو PIN) عنده إيميل داخلي شكله username@mowafy.local
-   (مش إيميل حقيقي، مجرد معرّف فريد لأن Supabase Auth محتاج إيميل).
-   الحسابات نفسها بتتعمل من لوحة Supabase بمعرفة الإدارة بس.
-   ============================================================ */
-
-const SUPABASE_URL = 'https://pahapoquxmsthtnqdjox.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_0yl8DFyoos-myh9EiKCg_g_QjHRhuDF';
-const EMAIL_DOMAIN = '@mowafy.local';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-function toEmail(name){
-  return name.trim().toLowerCase().replace(/\s+/g, '_') + EMAIL_DOMAIN;
-}
-
-// لو المستخدم داخل بالفعل بجلسة صالحة، يعدي على طول للداشبورد
 sb.auth.getSession().then(({ data }) => {
   if(data.session){ window.location.href = 'dashboard.html'; }
 });
@@ -200,62 +135,50 @@ function switchTab(mode){
   document.getElementById('tabPin').classList.toggle('active', !isPw);
   document.getElementById('passwordForm').style.display = isPw ? 'block' : 'none';
   document.getElementById('pinForm').style.display = isPw ? 'none' : 'block';
-  hideError();
 }
 
-function showError(msg){
-  const box = document.getElementById('errorBox');
-  box.textContent = msg;
-  box.style.display = 'block';
-}
-function hideError(){
-  document.getElementById('errorBox').style.display = 'none';
-}
-
-// PIN boxes: auto-advance + auto-back
 const pinInputs = document.querySelectorAll('.pin-boxes input');
 pinInputs.forEach((input, idx) => {
   input.addEventListener('input', () => {
     input.value = input.value.replace(/[^0-9]/g, '');
-    if(input.value && idx < pinInputs.length - 1){
-      pinInputs[idx + 1].focus();
-    }
+    if(input.value && idx < pinInputs.length - 1){ pinInputs[idx + 1].focus(); }
   });
   input.addEventListener('keydown', (e) => {
-    if(e.key === 'Backspace' && !input.value && idx > 0){
-      pinInputs[idx - 1].focus();
-    }
+    if(e.key === 'Backspace' && !input.value && idx > 0){ pinInputs[idx - 1].focus(); }
   });
 });
 
+async function afterLogin(){
+  await logActivity('login', 'تسجيل دخول');
+  window.location.href = 'dashboard.html';
+}
+
 document.getElementById('passwordForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  hideError();
   const btn = document.getElementById('passwordBtn');
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
-  if(!username || !password){ showError('من فضلك اكتب اسم المستخدم وكلمة السر'); return; }
+  if(!username || !password){ toast('من فضلك اكتب اسم المستخدم وكلمة السر', 'error'); return; }
 
   btn.disabled = true; btn.textContent = 'جارِ الدخول...';
   const { error } = await sb.auth.signInWithPassword({ email: toEmail(username), password });
   btn.disabled = false; btn.textContent = 'تسجيل الدخول';
-  if(error){ showError('اسم المستخدم أو كلمة السر غلط'); return; }
-  window.location.href = 'dashboard.html';
+  if(error){ toast('اسم المستخدم أو كلمة السر غلط', 'error'); return; }
+  afterLogin();
 });
 
 document.getElementById('pinForm').addEventListener('submit', async function(e){
   e.preventDefault();
-  hideError();
   const btn = document.getElementById('pinBtn');
   const name = document.getElementById('pinName').value.trim();
   const pin = Array.from(pinInputs).map(i => i.value).join('');
-  if(!name || pin.length !== 4){ showError('اكتب اسمك و4 أرقام PIN كاملة'); return; }
+  if(!name || pin.length !== 4){ toast('اكتب اسمك و4 أرقام PIN كاملة', 'error'); return; }
 
   btn.disabled = true; btn.textContent = 'جارِ الدخول...';
   const { error } = await sb.auth.signInWithPassword({ email: toEmail(name), password: pin });
   btn.disabled = false; btn.textContent = 'دخول';
-  if(error){ showError('الاسم أو رقم الـ PIN غلط'); return; }
-  window.location.href = 'dashboard.html';
+  if(error){ toast('الاسم أو رقم الـ PIN غلط', 'error'); return; }
+  afterLogin();
 });
 </script>
 </body>

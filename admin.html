@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة | الموافي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  .tabs2{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;}
+  .tab2{
+    padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;
+    background:#fff;border:1px solid var(--line);color:var(--muted);transition:all .18s var(--ease);
+  }
+  .tab2.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+</style>
+</head>
+<body data-page="admin">
+
+<header class="app-header" id="appNav"></header>
+
+<main class="page page-fade" id="adminMain" style="display:none;">
+  <div class="section-title">لوحة الإدارة</div>
+  <div class="section-sub">إدارة الحسابات والصلاحيات وسجل النشاط — يظهر لك إنت بس كأدمن رئيسي.</div>
+
+  <div class="tabs2">
+    <div class="tab2 active" data-tab="users">المستخدمين</div>
+    <div class="tab2" data-tab="add">إضافة مستخدم</div>
+    <div class="tab2" data-tab="reset">إعادة تعيين كلمة سر</div>
+    <div class="tab2" data-tab="log">سجل النشاط</div>
+  </div>
+
+  <!-- ===== المستخدمين ===== -->
+  <div class="tab-panel active" id="panel-users">
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>الاسم</th><th>اسم الدخول</th><th>الدور</th><th>الفروع</th><th>نوع الدخول</th><th>آخر دخول</th><th></th></tr>
+          </thead>
+          <tbody id="usersBody">
+            <tr><td colspan="7" class="empty-note">جارِ التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== إضافة مستخدم ===== -->
+  <div class="tab-panel" id="panel-add">
+    <div class="card">
+      <form id="newUserForm">
+        <div class="grid-2 even">
+          <div class="field">
+            <label for="nuFullName">الاسم الكامل</label>
+            <input type="text" id="nuFullName" placeholder="مثال: مدير الملاحة" required>
+          </div>
+          <div class="field">
+            <label for="nuUsername">اسم الدخول (بالإنجليزي، من غير مسافات)</label>
+            <input type="text" id="nuUsername" placeholder="مثال: manager_malaha" required>
+          </div>
+        </div>
+        <div class="grid-2 even">
+          <div class="field">
+            <label for="nuRole">الدور</label>
+            <select id="nuRole">
+              <option value="owner">صاحب البيزنس</option>
+              <option value="manager">مدير فرع</option>
+              <option value="accountant">محاسب</option>
+              <option value="field">مبيعات / سوشيال ميديا</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="nuLoginType">نوع الدخول</label>
+            <select id="nuLoginType">
+              <option value="password">كلمة سر</option>
+              <option value="pin">PIN (4 أرقام)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>الفروع (تقدر تحدد أكتر من واحد)</label>
+          <div class="branch-checks">
+            <label><input type="checkbox" class="nuBranchChk" value="branch_main"> فرع رئيسي</label>
+            <label><input type="checkbox" class="nuBranchChk" value="branch_sayouf"> فرع السيوف</label>
+            <label><input type="checkbox" class="nuBranchChk" value="branch_malaha"> فرع الملاحة</label>
+            <label><input type="checkbox" class="nuBranchChk" value="warehouse_main"> مخزن رئيسي</label>
+            <label><input type="checkbox" class="nuBranchChk" value="warehouse_sub"> مخزن فرعي</label>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">سيبها كلها من غير تحديد لو الشخص المفروض يشوف كل الفروع (زي صاحب البيزنس)</div>
+        </div>
+        <div class="field">
+          <label for="nuSecret">كلمة السر / الـ PIN</label>
+          <input type="text" id="nuSecret" placeholder="اكتبها هنا وابعتها للشخص بعدين" required>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:16px;">
+          <input type="checkbox" id="nuIsAdmin" style="width:auto;">
+          يديله صلاحية إدارة المستخدمين برضه (نادرًا ما تحتاجها — فعّلها بس لو هيبقى أدمن زيك)
+        </label>
+        <button type="submit" class="btn btn-primary" id="nuBtn">إنشاء الحساب</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== إعادة تعيين كلمة سر ===== -->
+  <div class="tab-panel" id="panel-reset">
+    <div class="card">
+      <div class="placeholder-note">الباسورد متخزّن مشفّر ومفيش طريقة تجيبه زي ما هو — الحل الوحيد إنك تحدد باسورد/PIN جديد للشخص.</div>
+      <form id="resetForm">
+        <div class="grid-2 even">
+          <div class="field">
+            <label for="rpUsername">اسم الدخول بتاع الشخص</label>
+            <input type="text" id="rpUsername" placeholder="مثال: manager_malaha" required>
+          </div>
+          <div class="field">
+            <label for="rpSecret">كلمة السر / الـ PIN الجديد</label>
+            <input type="text" id="rpSecret" placeholder="اكتب القيمة الجديدة" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="rpBtn">إعادة التعيين</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== سجل النشاط ===== -->
+  <div class="tab-panel" id="panel-log">
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>الوقت</th><th>مين</th><th>الإجراء</th><th>التفاصيل</th></tr></thead>
+          <tbody id="logBody">
+            <tr><td colspan="4" class="empty-note">جارِ التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+(async function(){
+  const profile = await loadProfile();
+  if(!profile) return;
+
+  if(!profile.is_admin){
+    toast('الصفحة دي للأدمن الرئيسي بس', 'error');
+    setTimeout(() => window.location.href = 'dashboard.html', 1200);
+    return;
+  }
+  document.getElementById('adminMain').style.display = 'block';
+
+  // tabs
+  document.querySelectorAll('.tab2').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab2').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  async function authedFetch(fnName, payload){
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    return { ok: res.ok, out };
+  }
+
+  async function loadUsers(){
+    const { ok, out } = await authedFetch('list-users', {});
+    const body = document.getElementById('usersBody');
+    if(!ok){
+      body.innerHTML = `<tr><td colspan="7" class="empty-note">تعذّر التحميل: ${out.error || ''}</td></tr>`;
+      return;
+    }
+    if(!out.users.length){
+      body.innerHTML = `<tr><td colspan="7" class="empty-note">مفيش مستخدمين لسه</td></tr>`;
+      return;
+    }
+    body.innerHTML = out.users.map(u => `
+      <tr>
+        <td>${u.full_name}</td>
+        <td>${u.username}</td>
+        <td><span class="badge badge-navy">${ROLE_NAMES[u.role] || u.role}</span>${u.is_admin ? ' <span class=\"badge badge-red\">أدمن</span>' : ''}</td>
+        <td>${branchLabel(u.branch)}</td>
+        <td><span class="badge badge-gold">${u.login_type === 'pin' ? 'PIN' : 'كلمة سر'}</span></td>
+        <td>${fmtDateTime(u.last_sign_in_at)}</td>
+        <td><button class="btn btn-secondary btn-sm" onclick="prefillReset('${u.username}')">إعادة تعيين</button></td>
+      </tr>
+    `).join('');
+  }
+
+  async function loadLog(){
+    const { data, error } = await sb.from('activity_log').select('*').order('created_at', { ascending: false }).limit(150);
+    const body = document.getElementById('logBody');
+    if(error){
+      body.innerHTML = `<tr><td colspan="4" class="empty-note">تعذّر التحميل</td></tr>`;
+      return;
+    }
+    if(!data.length){
+      body.innerHTML = `<tr><td colspan="4" class="empty-note">مفيش نشاط مسجّل لسه</td></tr>`;
+      return;
+    }
+    body.innerHTML = data.map(row => `
+      <tr>
+        <td>${fmtDateTime(row.created_at)}</td>
+        <td>${row.actor_name || '—'}</td>
+        <td><span class="badge badge-navy">${ACTION_NAMES[row.action] || row.action}</span></td>
+        <td>${row.details || ''}</td>
+      </tr>
+    `).join('');
+  }
+
+  window.prefillReset = function(username){
+    document.querySelectorAll('.tab2').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('.tab2[data-tab="reset"]').classList.add('active');
+    document.getElementById('panel-reset').classList.add('active');
+    document.getElementById('rpUsername').value = username;
+    document.getElementById('rpSecret').focus();
+  };
+
+  loadUsers();
+  loadLog();
+
+  document.getElementById('newUserForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('nuBtn');
+    const payload = {
+      full_name: document.getElementById('nuFullName').value.trim(),
+      username: document.getElementById('nuUsername').value.trim(),
+      role: document.getElementById('nuRole').value,
+      branch: Array.from(document.querySelectorAll('.nuBranchChk:checked')).map(el => el.value),
+      login_type: document.getElementById('nuLoginType').value,
+      secret: document.getElementById('nuSecret').value,
+      is_admin: document.getElementById('nuIsAdmin').checked
+    };
+    if(!payload.full_name || !payload.username || !payload.secret){
+      toast('من فضلك املأ الاسم واسم الدخول وكلمة السر/الـ PIN', 'error');
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'جارِ الإنشاء...';
+    const { ok, out } = await authedFetch('create-user', payload);
+    btn.disabled = false; btn.textContent = 'إنشاء الحساب';
+    if(!ok){
+      toast('خطأ: ' + (out.error || 'حصلت مشكلة غير معروفة'), 'error');
+      return;
+    }
+    toast(`تم إنشاء الحساب. اسم الدخول: ${out.username}`, 'success');
+    document.getElementById('newUserForm').reset();
+    loadUsers();
+  });
+
+  document.getElementById('resetForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('rpBtn');
+    const payload = {
+      username: document.getElementById('rpUsername').value.trim(),
+      secret: document.getElementById('rpSecret').value
+    };
+    if(!payload.username || !payload.secret){
+      toast('اكتب اسم الدخول والقيمة الجديدة', 'error');
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'جارِ التنفيذ...';
+    const { ok, out } = await authedFetch('reset-password', payload);
+    btn.disabled = false; btn.textContent = 'إعادة التعيين';
+    if(!ok){
+      toast('خطأ: ' + (out.error || 'حصلت مشكلة غير معروفة'), 'error');
+      return;
+    }
+    toast('اتغيّرت بنجاح. ابعتها للشخص.', 'success');
+    document.getElementById('resetForm').reset();
+    loadLog();
+  });
+})();
+</script>
+</body>
+</html>

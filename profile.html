@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الملف الشخصي | الموافي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body data-page="profile">
+
+<header class="app-header" id="appNav"></header>
+
+<main class="page page-fade">
+  <div class="section-title">الملف الشخصي</div>
+  <div class="section-sub">بياناتك وطريقة دخولك — أي تعديل في الدور أو الفروع بيتم من الإدارة بس.</div>
+
+  <div class="card hoverable" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+    <div class="avatar" style="width:60px;height:60px;font-size:24px;" id="pAvatar">?</div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:18px;font-weight:800;" id="pName">...</div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;" id="pBadges"></div>
+    </div>
+  </div>
+
+  <div class="section-title">تغيير كلمة السر / الـ PIN</div>
+  <div class="card">
+    <div class="placeholder-note">لو بتستخدم كلمة سر، اكتب واحدة قوية. لو بتستخدم PIN، لازم تكون 4 أرقام بالظبط.</div>
+    <form id="pwForm">
+      <div class="grid-2 even">
+        <div class="field">
+          <label for="pwNew">القيمة الجديدة</label>
+          <input type="password" id="pwNew" placeholder="••••••••" required>
+        </div>
+        <div class="field">
+          <label for="pwConfirm">تأكيد القيمة</label>
+          <input type="password" id="pwConfirm" placeholder="••••••••" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" id="pwBtn">حفظ التغيير</button>
+    </form>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+(async function(){
+  const profile = await loadProfile();
+  if(!profile) return;
+
+  document.getElementById('pAvatar').textContent = (profile.full_name || '?').trim().charAt(0);
+  document.getElementById('pName').textContent = profile.full_name;
+
+  const badges = document.getElementById('pBadges');
+  badges.innerHTML = `
+    <span class="badge badge-navy">${ROLE_NAMES[profile.role] || profile.role}</span>
+    <span class="badge badge-gold">${profile.login_type === 'pin' ? 'دخول بالـ PIN' : 'دخول بكلمة سر'}</span>
+    <span class="badge badge-muted">${branchLabel(profile.branch)}</span>
+    ${profile.is_admin ? '<span class="badge badge-red">أدمن</span>' : ''}
+  `;
+
+  document.getElementById('pwForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('pwBtn');
+    const v1 = document.getElementById('pwNew').value;
+    const v2 = document.getElementById('pwConfirm').value;
+
+    if(profile.login_type === 'pin' && !/^\d{4}$/.test(v1)){
+      toast('الـ PIN لازم يكون 4 أرقام بالظبط', 'error');
+      return;
+    }
+    if(v1 !== v2){
+      toast('القيمتين مش متطابقين', 'error');
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'جارِ الحفظ...';
+    const { error } = await sb.auth.updateUser({ password: v1 });
+    btn.disabled = false; btn.textContent = 'حفظ التغيير';
+
+    if(error){
+      toast('حصل خطأ: ' + error.message, 'error');
+      return;
+    }
+    await logActivity('change_password', 'غيّر كلمة السر/الـ PIN بنفسه');
+    toast('اتغيّرت بنجاح', 'success');
+    document.getElementById('pwForm').reset();
+  });
+})();
+</script>
+</body>
+</html>
