@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Aref+Ruqaa:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
   :root{
     --navy:#29378C;
@@ -173,12 +174,25 @@
 
 <script>
 /* ============================================================
-   DEMO / PROTOTYPE ONLY — لسه مش متوصل بباك اند حقيقي.
-   هنا بعدين هيتحط:
-     - نداء fetch لـ Supabase Auth (owner/manager/accountant)
-     - نداء fetch لـ n8n webhook أو Supabase RPC للـ PIN (sales/social)
-     - حفظ الـ JWT/session token في localStorage + بدء عداد الـ 15 دقيقة idle-timeout
+   Supabase Auth — تسجيل دخول حقيقي.
+   كل مستخدم (باسورد أو PIN) عنده إيميل داخلي شكله username@mowafy.local
+   (مش إيميل حقيقي، مجرد معرّف فريد لأن Supabase Auth محتاج إيميل).
+   الحسابات نفسها بتتعمل من لوحة Supabase بمعرفة الإدارة بس.
    ============================================================ */
+
+const SUPABASE_URL = 'https://pahapoquxmsthtnqdjox.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_0yl8DFyoos-myh9EiKCg_g_QjHRhuDF';
+const EMAIL_DOMAIN = '@mowafy.local';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function toEmail(name){
+  return name.trim().toLowerCase().replace(/\s+/g, '_') + EMAIL_DOMAIN;
+}
+
+// لو المستخدم داخل بالفعل بجلسة صالحة، يعدي على طول للداشبورد
+sb.auth.getSession().then(({ data }) => {
+  if(data.session){ window.location.href = 'dashboard.html'; }
+});
 
 function switchTab(mode){
   const isPw = mode === 'password';
@@ -214,7 +228,7 @@ pinInputs.forEach((input, idx) => {
   });
 });
 
-document.getElementById('passwordForm').addEventListener('submit', function(e){
+document.getElementById('passwordForm').addEventListener('submit', async function(e){
   e.preventDefault();
   hideError();
   const btn = document.getElementById('passwordBtn');
@@ -223,14 +237,13 @@ document.getElementById('passwordForm').addEventListener('submit', function(e){
   if(!username || !password){ showError('من فضلك اكتب اسم المستخدم وكلمة السر'); return; }
 
   btn.disabled = true; btn.textContent = 'جارِ الدخول...';
-  // TODO: استبدال الجزء ده بنداء حقيقي لـ Supabase Auth
-  setTimeout(() => {
-    btn.disabled = false; btn.textContent = 'تسجيل الدخول';
-    showError('تسجيل الدخول مش متصل بباك اند حقيقي لسه — ده Demo بصري بس');
-  }, 700);
+  const { error } = await sb.auth.signInWithPassword({ email: toEmail(username), password });
+  btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+  if(error){ showError('اسم المستخدم أو كلمة السر غلط'); return; }
+  window.location.href = 'dashboard.html';
 });
 
-document.getElementById('pinForm').addEventListener('submit', function(e){
+document.getElementById('pinForm').addEventListener('submit', async function(e){
   e.preventDefault();
   hideError();
   const btn = document.getElementById('pinBtn');
@@ -239,11 +252,10 @@ document.getElementById('pinForm').addEventListener('submit', function(e){
   if(!name || pin.length !== 4){ showError('اكتب اسمك و4 أرقام PIN كاملة'); return; }
 
   btn.disabled = true; btn.textContent = 'جارِ الدخول...';
-  // TODO: استبدال الجزء ده بنداء حقيقي لـ n8n / Supabase RPC للتحقق من الـ PIN
-  setTimeout(() => {
-    btn.disabled = false; btn.textContent = 'دخول';
-    showError('تسجيل الدخول مش متصل بباك اند حقيقي لسه — ده Demo بصري بس');
-  }, 700);
+  const { error } = await sb.auth.signInWithPassword({ email: toEmail(name), password: pin });
+  btn.disabled = false; btn.textContent = 'دخول';
+  if(error){ showError('الاسم أو رقم الـ PIN غلط'); return; }
+  window.location.href = 'dashboard.html';
 });
 </script>
 </body>
