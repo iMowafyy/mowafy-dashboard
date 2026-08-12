@@ -220,8 +220,13 @@
             </select>
           </div>
           <div class="field">
-            <label for="nuBranch">الفرع (لو مدير فرع)</label>
-            <input type="text" id="nuBranch" placeholder="مثال: el_malaha">
+            <label for="nuBranch">الفرع</label>
+            <select id="nuBranch">
+              <option value="">بدون فرع محدد (يشوف كل الفروع)</option>
+              <option value="el_malaha">فرع الملاحة</option>
+              <option value="el_sayouf">فرع السيوف</option>
+              <option value="main_warehouse">المخزن الرئيسي</option>
+            </select>
           </div>
         </div>
         <div class="grid-2">
@@ -237,9 +242,48 @@
             <input type="text" id="nuSecret" placeholder="اكتبها هنا وابعتها للشخص بعدين" required>
           </div>
         </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:14px;">
+          <input type="checkbox" id="nuIsAdmin" style="width:auto;">
+          يديله صلاحية إدارة المستخدمين برضه (نادرًا ما تحتاجها — فعّلها بس لو هيبقى أدمن زيك)
+        </label>
         <button type="submit" class="submit-btn-inline" id="nuBtn">إنشاء الحساب</button>
         <div id="nuResult" style="margin-top:10px;font-size:13px;font-weight:700;"></div>
       </form>
+    </div>
+
+    <div class="section-title" id="ownerOnlyUsersTitle2">إعادة تعيين كلمة سر / PIN لمستخدم</div>
+    <div class="card" id="ownerOnlyReset">
+      <div class="placeholder-note">الباسورد متخزّن مشفّر ومفيش طريقة تجيبه زي ما هو — الحل الوحيد إنك تحدد باسورد/PIN جديد للشخص.</div>
+      <form id="resetForm">
+        <div class="grid-2">
+          <div class="field">
+            <label for="rpUsername">اسم الدخول بتاع الشخص</label>
+            <input type="text" id="rpUsername" placeholder="مثال: manager_malaha" required>
+          </div>
+          <div class="field">
+            <label for="rpSecret">كلمة السر / الـ PIN الجديد</label>
+            <input type="text" id="rpSecret" placeholder="اكتب القيمة الجديدة" required>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn-inline" id="rpBtn">إعادة التعيين</button>
+        <div id="rpResult" style="margin-top:10px;font-size:13px;font-weight:700;"></div>
+      </form>
+    </div>
+
+    <div class="section-title" id="ownerOnlyPriceTitle">تعديل سعر صنف</div>
+    <div class="card" id="ownerOnlyPrice">
+      <div class="placeholder-note">هتشتغل فعليًا لما نربط n8n بقاعدة بيانات الفرع (الخطوة الجاية) — دلوقتي شكل الواجهة بس.</div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="prCode">كود الصنف أو اسمه</label>
+          <input type="text" id="prCode" placeholder="مثال: OIL-5030">
+        </div>
+        <div class="field">
+          <label for="prNewPrice">السعر الجديد</label>
+          <input type="text" id="prNewPrice" placeholder="مثال: 210">
+        </div>
+      </div>
+      <button type="button" class="submit-btn-inline" onclick="alert('هتتفعل مع ربط n8n بالفرع')">حفظ السعر الجديد</button>
     </div>
   </div>
 
@@ -306,13 +350,19 @@ function applyRole(profile){
   document.getElementById('viewAccountant').style.display = role === 'accountant' ? 'block' : 'none';
   document.getElementById('viewField').style.display = role === 'field' ? 'block' : 'none';
 
-  // المدير مايشوفش "مقارنة الفروع" ولا صافي الربح — دول لصاحب البيزنس بس (كل الأونرز)
-  const ownerOnlyItems = [document.getElementById('ownerOnlyTitle'), document.getElementById('ownerOnlyCompare')];
+  // المدير مايشوفش "مقارنة الفروع" ولا "تعديل الأسعار" ولا صافي الربح — دول لصاحب البيزنس بس (كل الأونرز)
+  const ownerOnlyItems = [
+    document.getElementById('ownerOnlyTitle'), document.getElementById('ownerOnlyCompare'),
+    document.getElementById('ownerOnlyPriceTitle'), document.getElementById('ownerOnlyPrice')
+  ];
   ownerOnlyItems.forEach(el => el.style.display = role === 'owner' ? 'block' : 'none');
   document.querySelectorAll('.kpi')[4] && (document.querySelectorAll('.kpi')[4].style.display = role === 'owner' ? 'block' : 'none');
 
-  // "إضافة مستخدم جديد": للأدمن الرئيسي بس، مش كل أصحاب البيزنس
-  const adminOnlyItems = [document.getElementById('ownerOnlyUsersTitle'), document.getElementById('ownerOnlyUsers')];
+  // "إضافة مستخدم" و"إعادة تعيين كلمة السر": للأدمن الرئيسي بس، مش كل أصحاب البيزنس
+  const adminOnlyItems = [
+    document.getElementById('ownerOnlyUsersTitle'), document.getElementById('ownerOnlyUsers'),
+    document.getElementById('ownerOnlyUsersTitle2'), document.getElementById('ownerOnlyReset')
+  ];
   adminOnlyItems.forEach(el => el.style.display = profile.is_admin === true ? 'block' : 'none');
 }
 
@@ -384,9 +434,10 @@ if(newUserForm){
       full_name: document.getElementById('nuFullName').value.trim(),
       username: document.getElementById('nuUsername').value.trim(),
       role: document.getElementById('nuRole').value,
-      branch: document.getElementById('nuBranch').value.trim(),
+      branch: document.getElementById('nuBranch').value,
       login_type: document.getElementById('nuLoginType').value,
-      secret: document.getElementById('nuSecret').value
+      secret: document.getElementById('nuSecret').value,
+      is_admin: document.getElementById('nuIsAdmin').checked
     };
     if(!payload.full_name || !payload.username || !payload.secret){
       resultBox.style.color = 'var(--red-dark)';
@@ -420,6 +471,54 @@ if(newUserForm){
       resultBox.textContent = 'خطأ في الاتصال، حاول تاني';
     }
     btn.disabled = false; btn.textContent = 'إنشاء الحساب';
+  });
+}
+
+// ---- إعادة تعيين كلمة سر/PIN لمستخدم (الأدمن الرئيسي بس) ----
+const resetForm = document.getElementById('resetForm');
+if(resetForm){
+  resetForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const btn = document.getElementById('rpBtn');
+    const resultBox = document.getElementById('rpResult');
+    resultBox.textContent = ''; resultBox.style.color = '';
+
+    const payload = {
+      username: document.getElementById('rpUsername').value.trim(),
+      secret: document.getElementById('rpSecret').value
+    };
+    if(!payload.username || !payload.secret){
+      resultBox.style.color = 'var(--red-dark)';
+      resultBox.textContent = 'اكتب اسم الدخول والقيمة الجديدة';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'جارِ التنفيذ...';
+    try{
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify(payload)
+      });
+      const out = await res.json();
+      if(!res.ok){
+        resultBox.style.color = 'var(--red-dark)';
+        resultBox.textContent = 'خطأ: ' + (out.error || 'حصلت مشكلة غير معروفة');
+      } else {
+        resultBox.style.color = '#1c7d4f';
+        resultBox.textContent = 'اتغيّرت بنجاح. ابعتلها للشخص.';
+        resetForm.reset();
+      }
+    } catch(err){
+      resultBox.style.color = 'var(--red-dark)';
+      resultBox.textContent = 'خطأ في الاتصال، حاول تاني';
+    }
+    btn.disabled = false; btn.textContent = 'إعادة التعيين';
   });
 }
 
